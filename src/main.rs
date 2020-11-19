@@ -2,7 +2,7 @@ use rand::{thread_rng, Rng};
 use std::time::{Instant};
 
 fn main() {
-    let size = 750000; // 100000;
+    let size = 100000; // 100000;
     let v = generate_random_array(size, 0, size);
 
     let mut u = v.clone();
@@ -95,11 +95,26 @@ fn quicksort<T: PartialOrd + std::fmt::Debug>(v: &mut [T]) {
     }
 
     // Now choose a pivot and do the organizing.
+    let mut smaller = length/2;
+    let mut last_index = length - 1;
+    let mut store_index = 0;
+    
+    for i in 0..last_index {
+        if &v[i] < &v[last_index] {
+            v.swap(i, store_index);
+            store_index += 1;
+        }
+    }
+
+    v.swap(store_index, length - 1);
+    smaller = store_index;
+
+
+
     
     // ...
 
-    let smaller = 99999999; // Totally wrong – you should fix this.
-
+    
     // Sort all the items < pivot
     quicksort(&mut v[0..smaller]);
     // Sort all the items ≥ pivot, *not* including the
@@ -155,10 +170,32 @@ fn merge<T: PartialOrd + std::marker::Copy + std::fmt::Debug>(xs: Vec<T>, ys: Ve
     // You stop when one of your indices hits the end of its
     // vector, and then push all the remaining elements from the
     // other vector onto the result.
+    let mut sorted = Vec::new();
+    let mut xsIndex = 0;
+    let mut ysIndex = 0;
 
+    while xsIndex < xs.len() && ysIndex < ys.len() {
+       if (xs[xsIndex] <= ys[ysIndex]) {
+           sorted.push(xs[xsIndex]);
+           xsIndex = xsIndex + 1;
+       }
+       else if (ys[ysIndex] < xs[xsIndex]) {
+           sorted.push(ys[ysIndex]);
+           ysIndex = ysIndex + 1;
+       }
+    }
+    
+     while(xsIndex < xs.len()){
+        sorted.push(xs[xsIndex]);
+        xsIndex = xsIndex + 1;
+     }
+     while(ysIndex < ys.len()){
+        sorted.push(ys[ysIndex]);
+        ysIndex = ysIndex + 1;
+    }
     // This is totally wrong and will not sort. You should replace it
     // with something useful. :)
-    return xs;
+    return sorted;
 }
 
 fn is_sorted<T: PartialOrd>(slice: &[T]) -> bool {
